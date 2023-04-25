@@ -471,7 +471,7 @@
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <widget class="QPushButton" name="pushButton">
+    <widget class="QPushButton" name="botonSuma">
      <property name="geometry">
       <rect>
        <x>0</x>
@@ -484,7 +484,7 @@
       <string>+</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_2">
+    <widget class="QPushButton" name="botonMulti">
      <property name="geometry">
       <rect>
        <x>310</x>
@@ -497,7 +497,7 @@
       <string>x</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_3">
+    <widget class="QPushButton" name="botonIgual">
      <property name="geometry">
       <rect>
        <x>310</x>
@@ -510,7 +510,7 @@
       <string>=</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_4">
+    <widget class="QPushButton" name="botonDiv">
      <property name="geometry">
       <rect>
        <x>0</x>
@@ -552,32 +552,12 @@
       <string>OP1:</string>
      </property>
     </widget>
-    <widget class="QTextEdit" name="textEdit">
+    <widget class="QTextEdit" name="textEdit_op1">
      <property name="geometry">
       <rect>
        <x>70</x>
        <y>20</y>
        <width>171</width>
-       <height>41</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QTextEdit" name="textEdit_2">
-     <property name="geometry">
-      <rect>
-       <x>260</x>
-       <y>20</y>
-       <width>201</width>
-       <height>41</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QTextEdit" name="textEdit_3">
-     <property name="geometry">
-      <rect>
-       <x>480</x>
-       <y>20</y>
-       <width>191</width>
        <height>41</height>
       </rect>
      </property>
@@ -608,6 +588,26 @@
       <string>HEXADECIMAL</string>
      </property>
     </widget>
+    <widget class="QTextBrowser" name="text_ieee_op1">
+     <property name="geometry">
+      <rect>
+       <x>260</x>
+       <y>20</y>
+       <width>201</width>
+       <height>41</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QTextBrowser" name="text_hex_op1">
+     <property name="geometry">
+      <rect>
+       <x>480</x>
+       <y>20</y>
+       <width>201</width>
+       <height>41</height>
+      </rect>
+     </property>
+    </widget>
    </widget>
    <widget class="QFrame" name="frame_5">
     <property name="geometry">
@@ -624,7 +624,7 @@
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <widget class="QPushButton" name="pushButton_5">
+    <widget class="QPushButton" name="botonReset">
      <property name="geometry">
       <rect>
        <x>0</x>
@@ -637,7 +637,7 @@
       <string>RESET</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_6">
+    <widget class="QPushButton" name="botonHistorial">
      <property name="geometry">
       <rect>
        <x>0</x>
@@ -679,32 +679,12 @@
       <string>OP2:</string>
      </property>
     </widget>
-    <widget class="QTextEdit" name="textEdit_4">
+    <widget class="QTextEdit" name="textEdit_op2">
      <property name="geometry">
       <rect>
        <x>70</x>
        <y>20</y>
        <width>171</width>
-       <height>41</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QTextEdit" name="textEdit_5">
-     <property name="geometry">
-      <rect>
-       <x>260</x>
-       <y>20</y>
-       <width>201</width>
-       <height>41</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QTextEdit" name="textEdit_6">
-     <property name="geometry">
-      <rect>
-       <x>480</x>
-       <y>20</y>
-       <width>191</width>
        <height>41</height>
       </rect>
      </property>
@@ -733,6 +713,26 @@
      </property>
      <property name="text">
       <string>HEXADECIMAL</string>
+     </property>
+    </widget>
+    <widget class="QTextBrowser" name="text_ieee_op2">
+     <property name="geometry">
+      <rect>
+       <x>260</x>
+       <y>20</y>
+       <width>201</width>
+       <height>41</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QTextBrowser" name="text_hex_op2">
+     <property name="geometry">
+      <rect>
+       <x>480</x>
+       <y>20</y>
+       <width>201</width>
+       <height>41</height>
+      </rect>
      </property>
     </widget>
    </widget>
@@ -764,36 +764,6 @@
       <string>RESULTADO:</string>
      </property>
     </widget>
-    <widget class="QTextEdit" name="textEdit_10">
-     <property name="geometry">
-      <rect>
-       <x>90</x>
-       <y>20</y>
-       <width>151</width>
-       <height>41</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QTextEdit" name="textEdit_11">
-     <property name="geometry">
-      <rect>
-       <x>260</x>
-       <y>20</y>
-       <width>201</width>
-       <height>41</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QTextEdit" name="textEdit_12">
-     <property name="geometry">
-      <rect>
-       <x>480</x>
-       <y>20</y>
-       <width>191</width>
-       <height>41</height>
-      </rect>
-     </property>
-    </widget>
     <widget class="QLabel" name="label_9">
      <property name="geometry">
       <rect>
@@ -818,6 +788,36 @@
      </property>
      <property name="text">
       <string>HEXADECIMAL</string>
+     </property>
+    </widget>
+    <widget class="QTextBrowser" name="text_ieee_resultado">
+     <property name="geometry">
+      <rect>
+       <x>260</x>
+       <y>20</y>
+       <width>201</width>
+       <height>41</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QTextBrowser" name="text_hex_resultado">
+     <property name="geometry">
+      <rect>
+       <x>470</x>
+       <y>20</y>
+       <width>201</width>
+       <height>41</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QTextBrowser" name="text_resultado">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>20</y>
+       <width>151</width>
+       <height>41</height>
+      </rect>
      </property>
     </widget>
    </widget>

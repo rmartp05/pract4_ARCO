@@ -15,6 +15,23 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+
+    void on_botonSuma_clicked();
+
+    void on_botonMulti_clicked();
+
+    void on_botonDiv_clicked();
+
+    void on_botonIgual_clicked();
+
+    void on_botonReset_clicked();
+
+    void on_botonHistorial_clicked();
+
+    void convertir_hex();
+
+    void convertir_ieee();
 private:
     Ui::MainWindow *ui;
 };
