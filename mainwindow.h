@@ -29,9 +29,9 @@ private slots:
 
     void on_botonHistorial_clicked();
 
-    void convertir_hex();
+    void convertir_hex(QString numero1, QString numero2);
 
-    void convertir_ieee();
+    void convertir_ieee(QString numero1, QString numero2);
 private:
     Ui::MainWindow *ui;
 };
