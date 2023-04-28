@@ -2,6 +2,9 @@
 #include "ui_mainwindow.h"
 #include "QString"
 #include "sstream"
+#include "bitset"
+#include "cmath"
+
 using namespace std;
 
 MainWindow::MainWindow(QWidget *parent)
@@ -100,5 +103,74 @@ void MainWindow::convertir_hex(QString numero1, QString numero2){
 }
 
 void MainWindow::convertir_ieee(QString numero1, QString numero2){
+    bool isDecimal_1 = numero1.contains(".");
+    bool isDecimal_2 = numero2.contains(".");
 
+    double num;
+    //hacemos numero1
+    if(isDecimal_1){
+        num = stod(numero1.toStdString());
+    }else{
+        num = stoi(numero1.toStdString());
+    }
+    bitset<64> bits(reinterpret_cast<unsigned long long>(&num));
+
+    int sign = bits[63];
+    int exponent = ((bits >> 52) & bitset<11>(2047)).to_ulong();
+    double fraction = 1.0;
+    for (int i = 51; i >= 0; i--) {
+        if (bits[i] == 1) {
+            fraction += pow(2.0, i - 52);
+        }
+    }
+
+    QString result1;
+    if (sign == 1) {
+        result1 += "-";
+    }
+    result1 += "1.";
+    for (int i = 51; i >= 0; i--) {
+        if (i == 51 && bits[i] == 0) {
+            continue;
+        }
+        result1 += QString::number(bits[i]);
+    }
+    result1 += " x 2^" + QString::number(exponent - 1023);
+
+    ui->text_ieee_op1->append(result1);
+
+    //hacemos numero2
+    if(isDecimal_2){
+        num = stod(numero1.toStdString());
+    }else{
+        num = stoi(numero1.toStdString());
+    }
+    bitset<64> bits2(reinterpret_cast<unsigned long long>(&num));
+
+    int sign2 = bits2[63];
+    int exponent2 = ((bits2 >> 52) & bitset<11>(2047)).to_ulong();
+    double fraction2 = 1.0;
+    for (int i = 51; i >= 0; i--) {
+        if (bits2[i] == 1) {
+            fraction += pow(2.0, i - 52);
+        }
+    }
+
+    QString result2;
+
+    if (sign == 1) {
+        result2 += "-";
+    }
+    result2 += "1.";
+    for (int i = 51; i >= 0; i--) {
+        if (i == 51 && bits2[i] == 0) {
+            continue;
+        }
+        result2 += QString::number(bits2[i]);
+    }
+    result2 += " x 2^" + QString::number(exponent2 - 1023);
+
+    //"imprimimos" los dos numeros convertidos en ieee
+    ui->text_ieee_op1->append(result1);
+    ui->text_ieee_op1->append(result2);
 }
