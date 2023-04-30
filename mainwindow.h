@@ -1,6 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-
+#include "alu.h"
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -10,6 +10,7 @@ QT_END_NAMESPACE
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+    ALU alu;
 
 public:
     MainWindow(QWidget *parent = nullptr);
