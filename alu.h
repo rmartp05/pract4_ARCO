@@ -19,11 +19,9 @@ private:
         float numero;
         unsigned int numerox;
     };
-    void convertir_ieee(QString numero1, QString numero2);
+    void convertir(QString numero1, QString numero2,int opc);
 
-    void convertir_exa(QString numero1, QString numero2);
-
-    void suma();
+    void suma(QString numero1, QString numero2);
 
     void multi();
 
