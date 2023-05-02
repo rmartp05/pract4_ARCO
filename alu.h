@@ -24,18 +24,23 @@ private:
     union Code operador1;
     union Code operador2;
 
-    void leerOperadores(QString numero1, QString numero2);
+    unsigned int hexNumA;
+    unsigned int hexNumB;
 
     void suma(QString numero1, QString numero2);
 
     void multi();
 
     void div();
+    void ieeeToHex();
 
     // pasar ieee a hexa aqui
 
 public:
     ALU();
+
+    void leerOperadores(QString numero1, QString numero2);
+
 };
 
 #endif // ALU_H

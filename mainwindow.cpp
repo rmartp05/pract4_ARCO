@@ -19,17 +19,13 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-
-
-//guardar los numeros en el historial
-//los metodos suma multi y div solo llaman a hex y ieee y los printean en op1 y op2 los dos
 void MainWindow::on_botonSuma_clicked()
 {
     QString numero1 = ui->lineEdit_OP1->text();
     QString numero2 = ui->lineEdit_OP2->text();
-    convertir_hex(numero1,numero2);
-    convertir_ieee(numero1,numero2);
-    alu.convertir_ieee();//si es private como le llamo?
+    alu.leerOperadores(numero1, numero2);
+    // array PEPE = alu.suma();
+    // ui.lineEDit arry(0)
 }
 
 

@@ -9,7 +9,7 @@
 
 using namespace std;
 
-void ALU::leerOperadores(numero1, numero2)
+void ALU::leerOperadores(QString numero1, QString numero2)
 {
     union Code a;
     a.numero = numero1.toFloat();
@@ -21,16 +21,19 @@ void ALU::leerOperadores(numero1, numero2)
     operador2 = b; // Se guarda la conversion en la variable de clase para facilitar las posteriores operaciones.
 }
 
-void ALU::IeeeToHex()
+void ALU::ieeeToHex()
 {
-    //convertir el ieee a hexa
-    std::bitset<23> afrac(frac1);//todos son arrays falta juntarlos
-    std::bitset<8> aexp(exp1);
-    std::bitset<1> asig(sig1);
+    bitset<23> afrac(operador1.bitfield.partFrac);
+    bitset<8> aexp(operador1.bitfield.expo);
+    bitset<1> asig(operador1.bitfield.sign);
 
-    std::bitset<24> bfrac(frac2);
-    std::bitset<8> bexp(exp2);
-    std::bitset<1> bsig(sig2);
+    ALU.hexNumA = ((asig.to_ulong() << 31) | (aexp.to_ulong() << 23) | afrac.to_ulong());
+
+    bitset<24> bfrac(operador2.bitfield.partFrac);
+    bitset<8> bexp(operador2.bitfield.expo);
+    bitset<1> bsig(operador2.bitfield.sign);
+
+    ALU.hexNumB = ((bsig.to_ulong() << 31) | (bexp.to_ulong() << 23) | bfrac.to_ulong());
 }
 
 void ALU::suma(QString numero1, QString numero2)
