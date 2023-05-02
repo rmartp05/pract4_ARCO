@@ -1,5 +1,6 @@
 #ifndef ALU_H
 #define ALU_H
+
 #include "QString"
 #include "sstream"
 
@@ -19,14 +20,19 @@ private:
         float numero;
         unsigned int numerox;
     };
-    void convertir(QString numero1, QString numero2,int opc);
+
+    union Code operador1;
+    union Code operador2;
+
+    void leerOperadores(QString numero1, QString numero2);
 
     void suma(QString numero1, QString numero2);
 
     void multi();
 
     void div();
-    //pasar ieee a hexa aqui
+
+    // pasar ieee a hexa aqui
 
 public:
     ALU();
