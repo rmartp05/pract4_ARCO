@@ -102,6 +102,6 @@ void MainWindow::convertir_hex(QString numero1, QString numero2){
 void MainWindow::convertir_ieee(QString numero1, QString numero2){
 
     //"imprimimos" los dos numeros convertidos en ieee
-    ui->text_ieee_op1->append(result1);
-    ui->text_ieee_op2->append(result2);
+//    ui->text_ieee_op1->append(result1);
+//    ui->text_ieee_op2->append(result2);
 }

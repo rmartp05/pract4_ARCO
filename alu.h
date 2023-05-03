@@ -27,12 +27,13 @@ private:
     unsigned int hexNumA;
     unsigned int hexNumB;
 
-    void suma(QString numero1, QString numero2);
+    void suma();
 
     void multi();
 
     void div();
     void ieeeToHex();
+    void imprimirNumeroBinario(float numero);
 
     // pasar ieee a hexa aqui
 
