@@ -3,6 +3,7 @@
 
 #include "QString"
 #include "sstream"
+#include "bitset"
 
 using namespace std;
 
@@ -27,13 +28,12 @@ private:
     unsigned int hexNumA;
     unsigned int hexNumB;
 
-    void suma();
-
     void multi();
 
     void div();
     void ieeeToHex();
     void imprimirNumeroBinario(float numero);
+    bitset<24> convertBinary(bitset<24> mantisa);
 
     // pasar ieee a hexa aqui
 
@@ -42,6 +42,7 @@ public:
 
     void leerOperadores(QString numero1, QString numero2);
 
+    void suma();
 };
 
 #endif // ALU_H

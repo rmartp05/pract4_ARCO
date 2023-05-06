@@ -24,8 +24,7 @@ void MainWindow::on_botonSuma_clicked()
     QString numero1 = ui->lineEdit_OP1->text();
     QString numero2 = ui->lineEdit_OP2->text();
     alu.leerOperadores(numero1, numero2);
-    // array PEPE = alu.suma();
-    // ui.lineEDit arry(0)
+    alu.suma();
 }
 
 

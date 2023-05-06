@@ -44,15 +44,19 @@ void ALU::ieeeToHex()
 void ALU::suma()
 {
 
-    bitset <24> mantisaOp1(operador1.numero); // PASARLO A BINARIO
+    bitset <24> mantisa1(operador1.numero); // PASARLO A BINARIO
 
-    while(mantisaOp1.size() != 24)
-    {
-        int bitsFaltantes = 24 - mantisaOp1.size();
-        mantisaOp1.reset(mantisaOp1.size() + bitsFaltantes, bits_adicionales);
-    }
+    bitset <24> mantisa2(operador2.numero);
 
-    bitset <24> mantisaOp2(operador2.numero);
+    cout << mantisa1 << endl;
+    cout << mantisa2 << endl;
+
+    mantisa1 = convertBinary(mantisa1);
+    mantisa2 = convertBinary(mantisa2);
+
+    cout << mantisa1 << endl;
+    cout << mantisa2 << endl;
+}
 
    // int mantisa1 =  | (1 << 23); //mueve el valor binario 1 a la izquierda 23 posiciones
     int mantisa2 = operador2.bitfield.expo | (1 << 23); //mueve el valor binario 1 a la izquierda 23 posiciones
@@ -169,4 +173,23 @@ int calcular_acarreo(int a, int b) {
     return (suma & bit_acarreo) > 0 ? 1 : 0; // si el resultado del AND es mayor que cero, hay acarreo
 }
 
+
+bitset<24> ALU::convertBinary(bitset<24> mantisa)
+{
+    // Convertir bitset a entero y luego a cadena binaria
+   string s = bitset<24>(mantisa.to_ulong()).to_string();
+
+   // Encontrar la posición del primer bit "1" desde la izquierda
+   int i = 0;
+   while (s[i] == '0') {
+       i++;
+   }
+
+   // Desplazar los bits a la derecha esa cantidad de posiciones
+   s = s.substr(i) + s.substr(0, i);
+
+   // Convertir la cadena binaria resultante a un nuevo bitset
+   bitset<24> result(s);
+   return result;
+}
 
