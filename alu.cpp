@@ -56,12 +56,8 @@ void ALU::suma()
 
     cout << mantisa1 << endl;
     cout << mantisa2 << endl;
-}
 
-   // int mantisa1 =  | (1 << 23); //mueve el valor binario 1 a la izquierda 23 posiciones
-    int mantisa2 = operador2.bitfield.expo | (1 << 23); //mueve el valor binario 1 a la izquierda 23 posiciones
-
-    //paso1
+    //paso1  POSIBLE NECESIDAD DE CAMBIAR EL TIPO DE VARIABLES
     bitset<24> P;
     int g, r, st = 0;
     int n = 24; // Numero de bits de la mantisa
@@ -71,10 +67,7 @@ void ALU::suma()
     //paso2
     if(operador1.bitfield.expo < operador2.bitfield.expo)
     {
-        union Code aux;
-        aux = operador1;
-        operador1 = operador2;
-        operador2 = aux;
+        swap(operador1, operador2);
         intercambio = true;
     }
 
