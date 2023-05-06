@@ -34,6 +34,9 @@ private:
     void ieeeToHex();
     void imprimirNumeroBinario(float numero);
     bitset<24> convertBinary(bitset<24> mantisa);
+    bitset<24> calcularComplementoDos(bitset<24> numero);
+    bitset<24> calcular_acarreo(bitset<24> a, bitset<24> b);
+    string floatToBinaryIEEE754(float value);
 
     // pasar ieee a hexa aqui
 
