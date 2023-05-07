@@ -1,299 +1,637 @@
 #include "alu.h"
 
-#include "QString"
-#include "sstream"
-#include <bitset>
-#include <string>
-#include <iostream>
-#include <climits>
+ALU::ALU()
+{
 
-using namespace std;
-
-ALU::ALU() {
-    // código para inicializar la clase ALU
 }
+union Code {
 
-void ALU::leerOperadores(QString numero1, QString numero2)
+    struct{
+        unsigned int partFrac : 23;
+        unsigned int expo : 8;
+        unsigned int sign : 1;
+    }bitfield;
+
+    float numero;
+    unsigned int numerox;
+};
+
+/******************************/
+//SUMA
+/******************************/
+
+float ALU::sumar(float numA, float numB)
 {
     union Code a;
-    a.numero = numero1.toFloat();
-    // La asignacion de sign, expo y partFract es automatica segun se introduce la variable numero.
-    this->operador1 = a; // Se guarda la conversion en la variable de clase para facilitar las posteriores operaciones.
-
     union Code b;
-    b.numero = numero2.toFloat();
-    this->operador2 = b; // Se guarda la conversion en la variable de clase para facilitar las posteriores operaciones.
-
-}
-
-void ALU::ieeeToHex()
-{
-    bitset<23> afrac(operador1.bitfield.partFrac);
-    bitset<8> aexp(operador1.bitfield.expo);
-    bitset<1> asig(operador1.bitfield.sign);
-
-    this->hexNumA = ((asig.to_ulong() << 31) | (aexp.to_ulong() << 23) | afrac.to_ulong());
-
-    bitset<24> bfrac(operador2.bitfield.partFrac);
-    bitset<8> bexp(operador2.bitfield.expo);
-    bitset<1> bsig(operador2.bitfield.sign);
-
-    this->hexNumB = ((bsig.to_ulong() << 31) | (bexp.to_ulong() << 23) | bfrac.to_ulong());
-}
-
-void ALU::suma()
-{
-
-    bitset <24> mantisa1(operador1.numero); // PASARLO A BINARIO
-
-    bitset <24> mantisa2(operador2.numero);
-
-    cout << mantisa1 << endl;
-    cout << mantisa2 << endl;
-
-    mantisa1 = convertBinary(mantisa1);
-    mantisa2 = convertBinary(mantisa2);
-
-    cout << mantisa1 << endl;
-    cout << mantisa2 << endl;
-
-    //paso1  POSIBLE NECESIDAD DE CAMBIAR EL TIPO DE VARIABLES
-    bitset<24> P;
-    int g = 0, r = 0, st = 0;
-    int n = 24; // Numero de bits de la mantisa
-    bool intercambio = false;
-    bool completado_P = false;
-
-    //paso2
-    if(operador1.bitfield.expo < operador2.bitfield.expo)
-    {
-        swap(operador1, operador2);
-        intercambio = true;
-    }
-
-    //paso3
+    union Code aux;
     union Code suma;
-    suma.bitfield.expo = operador1.bitfield.expo;
-    int d = operador1.bitfield.expo - operador2.bitfield.expo;
 
-    if(d<0)
-    {
-        // ERROR
+    a.numero=numA;
+    b.numero=numB;
+
+    if(a.numero==0&&b.numero!=0){
+        suma.numero=b.numero;
+        return suma.numero;
+    }else if(b.numero==0&&a.numero!=0){
+        suma.numero=a.numero;
+        return suma.numero;
     }
 
-    //paso4
-    if(operador1.bitfield.sign != operador2.bitfield.sign)
-    {
-        mantisa2 = ~mantisa2.to_ulong() + 1;
+    if((a.bitfield.expo-b.bitfield.expo ==0)&&(a.bitfield.partFrac-b.bitfield.partFrac==0)&&(a.bitfield.sign != b.bitfield.sign)){
+        suma.numero = 0;
+        return suma.numero;
     }
 
-    cout << "Complemento a dos: " << endl;
-    cout << mantisa2 << endl;
+    if(a.bitfield.expo<1){
+        a.bitfield.expo=1;
+        denormalA=true;
+    }
 
-    //paso5
-    P = mantisa2;
+    if (b.bitfield.expo<1){
+        b.bitfield.expo=1;
+        denormalB=true;
+    }
 
-    //paso6
-    // d=0 -> nada d=1->g d=2->g,r d=3 -> g,r y st st->mirar hasta el final si hay un 1
-    if (d == 1)
-    {
-        g = P[d-1];
+    ma=DtoB(a.bitfield.partFrac,  denormalA);
+    mb=DtoB(b.bitfield.partFrac,  denormalB);
 
-    } else if(d == 2)
-    {
-        g = P[d-1];
-        r = P[d-2];
 
-    } else if(d == 3)
-    {
-        g = P[d-1];
-        r = P[d-2];
 
-        for (int i = 22; i >= 0; --i) {
-            if (P[i]) {
-                st = 1;
-                break;
+    if(a.bitfield.expo<b.bitfield.expo){
+        aux = a;
+        a = b;
+        b = aux;
+        ma=DtoB(a.bitfield.partFrac, denormalA);
+        mb=DtoB(b.bitfield.partFrac, denormalB);
+        operandosIntercambiados = true;
+    }
+    suma.bitfield.expo = a.bitfield.expo;
+    d= a.bitfield.expo - b.bitfield.expo;
+    if(d>22){
+        d=22;
+    }
+
+    if(a.bitfield.sign != b.bitfield.sign){
+        mb =complemento(mb);
+    }
+
+    P=mb;
+
+
+
+    if(d>=1){
+        dAux=23-(d-1);
+        g=P.at(dAux);
+    }
+
+    if(d>=2){
+        dAux=23-(d-2);
+        r=P.at(dAux);
+    }
+
+    if(d>=3){
+        if(d==3){
+            st=P.at(23);
+        }
+
+        for(int i=3; d-i>=0;i++){
+            dAux=23-(d-i);
+            if(P.at(dAux)==1){
+                st=1;
             }
         }
+
     }
 
 
-    cout << "g" << endl;
 
-    cout << g << endl;
-
-    cout << "r" << endl;
-
-    cout << r << endl;
-
-    cout << "st"<< endl;
-
-    cout << st << endl;
-
-
-    //paso7
-    if(operador1.bitfield.sign != operador2.bitfield.sign)
-    {
-        P = (P.to_ulong() >> d) | (1 << (P.size() - d));
-    }else
-    {
-        P = (P.to_ulong() >> d) | ((1 << d) - 1) << (sizeof(P) * 8 - d);
+    if(a.bitfield.sign != b.bitfield.sign){
+        for(int j=0; j<d; j++){
+            for(int i=22; i>0; i--){
+                P.at(i)=P.at(i-1);
+            }
+            P.at(j)=1;
+        }
+    }else{
+        for(int j=0; j<d; j++){
+            for(int i=22; i>0; i--){
+                P.at(i)=P.at(i-1);
+            }
+            P.at(j)=0;
+        }
     }
 
-    cout << "sign1" << endl;
-    cout << operador1.bitfield.sign << endl;
-    cout << operador2.bitfield.sign << endl;
-    cout << "d" << endl;
-    cout << d << endl;
-    cout << "P" << endl;
-    cout << P << endl;
 
-    //paso8
+    c=sumaBinaria(P, ma);
 
-    P = mantisa1.to_ulong() + P.to_ulong();
-    bitset<24> C = calcular_acarreo(mantisa1, P);
 
-    // paso9
-    if((operador1.bitfield.sign != operador2.bitfield.sign) && (P[n-1] == 1) && (C == 0))
-    {
-        P = ~P.to_ulong() + 1;
-        completado_P = true;
+
+    if((a.bitfield.sign != b.bitfield.sign)&&(P.at(n-24)==1)&&(c==0)){
+        P=complemento(P);
+        complementado_P=true;
     }
 
-    // paso10
-    if((operador1.bitfield.sign == operador2.bitfield.sign) && (C == 1))
-    {
-        if(g == 1 || r == 1 || st == 1)
-        {
-            st = 1;
+
+    if((a.bitfield.sign == b.bitfield.sign && c==1 )){
+        if(st==1||g==1||r==1){
+            st=1;
+        }else{
+            st=0;
+        }
+        r=P.at(23);
+
+
+        for(int i=23; i>0; i--){
+            P.at(i)=P.at(i-1);
+        }
+        P.at(0)=c;
+
+
+        suma.bitfield.expo+=1;
+    }else{
+        int i=0;
+        while(i<24 && P.at(i)==0){
+            i++;
+            k=i;
+        }
+        if(denormalA==true||denormalB==true){
+            k=0;
+        }
+        if(k==24){
+            k=0;
+        }
+        if(k==0){
+            if(st==1||r==1){
+                st=1;
+            }else{
+                st=0;
+            }
+            r=g;
+        }
+        if(k>1){
+            st=0;
+            r=0;
         }
 
-        r = P[0];
+        for(int j=0; j<k; j++){
+            for(int i=0; i<23; i++){
+                P.at(i)=P.at(i+1);
+            }
+            P.at(23-j)=g;
+        }
 
-        P = (P.to_ulong() >> 1) | (C.to_ulong() << (sizeof(P) * 8 - 1));
+        suma.bitfield.expo-=k;
+    }
 
-        suma.bitfield.expo += 1;
 
-    }else
-    {
-        int k = 0;
-        for(int i = 23; i >= 0; i--)
-        {
-            if(P[i] == 1){
-                k = 23 - i;
-                break;
+    if((r==1&&st==1)||(r==1&&st==0&&P.at(23)==1)){
+        for(int i =0; i<24; i++){
+            if(i==23){
+                uno.push_back(1);
+            }else{
+                uno.push_back(0);
             }
         }
-        //ya teniendo k:
-
-        if(k == 0)
-        {
-            if(r == 1 || st == 1)
-            {
-                st = 1;
+        c2=sumaBinaria(P,uno);
+        if(c2==1){
+            for(int i=n-1; i>0; i--){
+                P.at(i)=P.at(i-1);
             }
-            r = g;
-
-        }else if(k == 1)
-        {
-            r = 0;
-            st = 0;
-            //como se desplaza k bits se añaden k gs a la derecha
-            for(int i =0; i < k; i++)
-            {
-                P =(P.to_ulong() >> 1) | (g << 23);
-            }
-            suma.bitfield.expo = suma.bitfield.expo - k;
+            P.at(0)=c2;
+            suma.bitfield.expo+=1;
         }
+
     }
 
-    //paso11
-    if(((r == 1) && (st == 1)) || (r ==1) && (st == 0) && (P[0]== 1))
-    {
-        P = P.to_ulong() + 1;
-        bitset<24> uno = 1;
-        bitset<24> C2 = calcular_acarreo(P, uno);
-        if(C2 == 1)
-        {
-                P =(P.to_ulong() >> 1) | (C2.to_ulong() << 23);
+
+
+
+    suma.bitfield.partFrac = VectorToInt(P);
+
+    if(operandosIntercambiados==false&&complementado_P==true){
+        suma.bitfield.sign=b.bitfield.sign;
+    }else{
+        suma.bitfield.sign=a.bitfield.sign;
+    }
+    if(a.bitfield.expo+b.bitfield.expo-127>254){
+        if(suma.bitfield.sign==0){
+            return INFINITY;
         }
-    }
-    bitset<24> mantisaSuma = P;
-    //paso12
-    if((intercambio ==false) && (completado_P == true))
-    {
-        suma.bitfield.sign = operador2.bitfield.sign;
-    }else
-    {
-        suma.bitfield.sign = operador1.bitfield.sign;
+        return -INFINITY;
     }
 
-    // Paso 13
-    union Code sumaFinal;
-    sumaFinal.bitfield.sign = suma.bitfield.sign;
-    sumaFinal.bitfield.expo = suma.bitfield.expo;
+    return suma.numero;
 
-    // Se calcula el desplazamiento necesario para normalizar la mantisa de la suma
-    int shift = 0;
-    for (int i = mantisaSuma.size() - 1; i >= 0; --i) {
-        if (mantisaSuma[i] == 1) {
-            shift = mantisaSuma.size() - 1 - i;
-            break;
-        }
-    }
-
-    // Se ajusta el exponente de la suma en función del desplazamiento
-    sumaFinal.bitfield.expo += shift;
-
-    // Se ajusta la mantisa de la suma según el desplazamiento
-    bitset<24> mantisaAjustada = mantisaSuma >> shift;
-
-    // Se guarda la mantisa ajustada en el campo correspondiente de sumaFinal.numero
-    sumaFinal.numero = mantisaAjustada.to_ulong();
-
-    // Se muestra el valor de la suma en IEEE 754
-    string sumaIEEE = floatToBinaryIEEE754(sumaFinal.numero);
-    cout << "Suma en IEEE 754: " << sumaIEEE << endl;
 }
 
-bitset<24> ALU::calcular_acarreo(bitset<24> a, bitset<24> b) {
-    bitset<24> suma = a.to_ulong() + b.to_ulong();
-    bitset<24> bit_acarreo = 1 << 23; // bit de acarreo en la posición más significativa (32 bits en total)
-    return (suma.to_ulong() & bit_acarreo.to_ulong()) > 0 ? 1 : 0; // si el resultado del AND es mayor que cero, hay acarreo
+/******************************/
+//MULTIPLICACION
+/******************************/
+
+float ALU::multiplicar(float numA, float numB){
+    union Code a;
+    union Code b;
+    union Code producto;
+    int expo = 0;
+
+    a.numero = numA;
+    b.numero = numB;
+
+    if(a.numero==0||b.numero==0){
+        if(a.bitfield.expo>254||b.bitfield.expo>254){
+
+            return NAN;
+        }
+
+        return 0;
+    }
+
+    if(a.bitfield.expo<1){
+        a.bitfield.expo=1;
+        denormalA=true;
+    }
+
+    if (b.bitfield.expo<1){
+        b.bitfield.expo=1;
+        denormalB=true;
+    }
+
+    ma=DtoB(a.bitfield.partFrac,  denormalA);
+    mb=DtoB(b.bitfield.partFrac,  denormalB);
+
+
+
+    if(a.bitfield.sign==1&&b.bitfield.sign==1){
+        producto.bitfield.sign=0;
+    }else if (a.bitfield.sign==0&&b.bitfield.sign==0){
+        producto.bitfield.sign=0;
+    }else{
+        producto.bitfield.sign=1;
+    }
+
+
+
+    if(a.bitfield.expo+b.bitfield.expo-127>254){
+        if(producto.bitfield.sign==0){
+            return INFINITY;
+        }
+        return -INFINITY;
+    }
+    expo = ((a.bitfield.expo+b.bitfield.expo)-127);
+
+
+
+    for(int i=0; i<24; i++){
+        P.push_back(0);
+    }
+    for(int i=n-1; i>=0; i--){
+
+
+        if(ma.at(n-1)==1){
+            c=sumaBinaria(P,mb);
+        }else{
+            c=0;
+        }
+        for(int i=n-1; i>0; i--){
+            ma.at(i)=ma.at(i-1);
+        }
+        ma.at(0)=P.at(23);
+        for(int i=n-1; i>0; i--){
+            P.at(i)=P.at(i-1);
+        }
+        P.at(0)=c;
+
+
+
+    }
+
+
+
+    if(P.at(0)==0){
+
+        for(int i=0; i<23; i++){
+            P.at(i)=P.at(i+1);
+        }
+        P.at(n-1)=ma.at(0);
+
+
+    }else{
+        expo+=1;
+    }
+
+
+
+    r=ma.at(n-1);
+    for(int i=n-2; i>=0; i--){
+        if(ma.at(i)==1){
+            st=1;
+        }
+    }
+
+    for(int i =0; i<24; i++){
+        if(i==23){
+            uno.push_back(1);
+        }else{
+            uno.push_back(0);
+        }
+    }
+
+    if((r==1&&st==1)||(r==1&&st==0&&P.at(0)==1)){
+        sumaBinaria(P,uno);
+    }
+
+
+    if(expo>254){
+        if(producto.bitfield.sign==0){
+            return INFINITY;
+        }
+        return -INFINITY;
+    }
+    else if(expo<=0){
+        t=1-expo;
+        if(t>=n){
+            return 0;
+        }else{
+            for(int i =t; i>0; i--){
+                for(int i=n-1; i>0; i--){
+                    ma.at(i)=ma.at(i-1);
+                }
+                ma.at(0)=P.at(23);
+                for(int i=n-1; i>0; i--){
+                    P.at(i)=P.at(i-1);
+                }
+                P.at(0)=0;
+            }
+            expo=1;
+        }
+    }
+
+    if(denormalA==true||denormalB==true){
+        if(expo>1){
+            t1=expo-1;
+            for(int i=0; i<=n-1; i++){
+                if(P.at(i)==0){
+                    t2++;
+                }else{
+                    break;
+                }
+            }
+            if(t2==n){
+                for(int i=0; i<=n-1; i++){
+                    if(ma.at(i)==0){
+                        t2++;
+                    }else{
+                        break;
+                    }
+                }
+            }
+
+            if(t1>t2){
+                t=t2;
+            }else{
+                t=t1;
+            }
+
+            expo=expo-t;
+
+            for(int i =t; i>0; i--){
+                for(int i=n-1; i>0; i--){
+                    ma.at(i)=ma.at(i-1);
+                }
+                ma.at(0)=P.at(23);
+                for(int i=n-1; i>0; i--){
+                    P.at(i)=P.at(i-1);
+                }
+                P.at(0)=0;
+            }
+
+
+        }
+    }
+    producto.bitfield.expo=expo;
+    producto.bitfield.partFrac=VectorToInt(P);
+
+
+    return producto.numero;
+
+
+}
+
+/******************************/
+//DIVISION
+/******************************/
+
+float ALU::dividir(float numA, float numB){
+    union Code a;
+    union Code b;
+    union Code aux;
+    union Code division;
+
+    a.numero=numA;
+    b.numero=numB;
+    if((b.numero==0)&&(a.numero==0)){
+        return NAN;
+    }else if(a.numero==0){
+        return 0;
+    }else if(b.numero==0){
+        if(a.bitfield.sign==b.bitfield.sign){
+            return INFINITY;
+        }else{
+            return -INFINITY;
+        }
+    }
+
+    if(a.bitfield.expo<1){
+        a.bitfield.expo=1;
+        denormalA=true;
+    }
+
+    if (b.bitfield.expo<1){
+        b.bitfield.expo=1;
+        denormalB=true;
+    }
+
+    ma=DtoB(a.bitfield.partFrac,  denormalA);
+    mb=DtoB(b.bitfield.partFrac,  denormalB);
+
+    parteEnteraA=ma.at(0);
+    parteEnteraB=mb.at(0);
+
+
+    for(int i=1; i<n; i++){
+        parteDecimalA.push_back(ma.at(i));
+    }
+
+    for(int i=1; i<n; i++){
+        parteDecimalB.push_back(mb.at(i));
+    }
+
+    DecimalA=parteEnteraA*pow(10,0);
+    for(int i=1; i<23; i++){
+        DecimalA=DecimalA+(parteDecimalA.at(i-1)*pow(2,-i));
+    }
+
+    DecimalB=parteEnteraB*pow(10,0);
+
+    for(int i=1; i<23; i++){
+        DecimalB=DecimalB+(parteDecimalB.at(i-1)*pow(2,-i));
+
+
+    }
+
+    if(DecimalB>=1&&DecimalB<1.25){
+        bPrima=1;
+    }else if(DecimalB>=1&&DecimalB<2){
+        bPrima=0.80;
+    }
+
+    if (a.bitfield.sign==1&&b.bitfield.sign==1){
+        division.bitfield.sign=0;
+    }else if(a.bitfield.sign==0&&b.bitfield.sign==0){
+        division.bitfield.sign=0;
+    }else{
+        division.bitfield.sign=1;
+    }
+
+
+    X.push_back(DecimalA*bPrima);
+    Y.push_back(DecimalB*bPrima);
+
+    int i=0;
+    do{
+        r1=2-Y.at(i);
+        Y.push_back(Y.at(i)*r1);
+        X.push_back(X.at(i)*r1);
+
+        i++;
+    }while(abs(X.at(i)-X.at(i-1))>pow(10,-4));
+
+    aux.numero=X.at(X.size()-1);
+    if(a.bitfield.expo-b.bitfield.expo+aux.bitfield.expo>254){
+        if(division.bitfield.sign==0){
+            return INFINITY;
+        }
+        return -INFINITY;
+    }
+    division.bitfield.expo=a.bitfield.expo-b.bitfield.expo+aux.bitfield.expo;
+    division.bitfield.partFrac =aux.bitfield.partFrac;
+
+
+    return division.numero;
+
 }
 
 
-bitset<24> ALU::convertBinary(bitset<24> mantisa)
+
+
+int ALU::sumaBinaria(vector<int> a,vector<int> b){
+    int cAux=0;
+
+    for(int i=23;i>=0;i--){
+        if(a[i]+b[i]+cAux==0){
+            a[i]=0;
+            cAux=0;
+
+        }
+        else if(a[i]+b[i]+cAux==1){
+            a[i]=1;
+            cAux=0;
+        }
+        else if(a[i]+b[i]+cAux==2){
+            a[i]=0;
+            cAux=1;
+        }
+        else if(a[i]+b[i]+cAux==3){
+            a[i]=1;
+            cAux=1;
+
+        }
+    }
+    P=a;
+
+    return cAux;
+
+}
+
+
+string ALU::floattoIEE (float num){
+    union Code a;
+    iee="";
+    a.numero=num;
+    if(a.bitfield.expo>254){
+        if(a.bitfield.sign==0){
+            return "inf";
+        }else{
+            return "-inf";
+        }
+    }
+    iee.append("s: "+ to_string(a.bitfield.sign)+ "   " );
+    iee.append("e: "+ to_string(a.bitfield.expo)+ "   ");
+    iee.append("p: "+ to_string(a.bitfield.partFrac)+ "   ");
+    return iee;
+}
+
+
+
+vector<int> ALU::DtoB(int frac, bool denormal){
+    vector<int> vBits;
+    copiaNumero=0;
+    copiaNumero =frac;
+
+    if(denormal==true){
+        vBits.push_back(0);
+    }else{
+        vBits.push_back(1);
+    }
+
+    for (int i = 1; i < contBits ; i++ ){
+        vBits.push_back(0);
+    }
+
+    copiaNumero =frac;
+    ultima = contBits - 1;
+    while(copiaNumero != 0){
+        vBits[ultima] = copiaNumero % 2;
+        copiaNumero = copiaNumero / 2;
+        ultima--;
+    }
+    return vBits;
+
+
+
+}
+
+vector<int> ALU :: complemento(vector<int> vBits){
+    for (i = 0; i < 24 ; i++ ){
+        if(vBits[i] == 0){
+            vBits[i] = 1;
+        }
+        else{
+            vBits[i] = 0;
+        }
+    }
+    ultima2=24 - 1;
+    while ( (ultima2 >= 0) && (vBits.at(ultima2) == 1)) {
+        vBits[ultima2] = 0;
+        ultima2--;
+    }
+    vBits[ultima2] = 1;
+    return vBits;
+}
+
+unsigned int ALU :: VectorToInt(vector<int> v)
 {
-    // Convertir bitset a entero y luego a cadena binaria
-   string s = bitset<24>(mantisa.to_ulong()).to_string();
-
-   // Encontrar la posición del primer bit "1" desde la izquierda
-   int i = 0;
-   while (s[i] == '0') {
-       i++;
-   }
-
-   // Desplazar los bits a la derecha esa cantidad de posiciones
-   s = s.substr(i) + s.substr(0, i);
-
-   // Convertir la cadena binaria resultante a un nuevo bitset
-   bitset<24> result(s);
-   return result;
-}
 
 
-// Función auxiliar para convertir un número float a su representación binaria IEEE 754
-string ALU::floatToBinaryIEEE754(float value) {
-    static_assert(sizeof(float) == sizeof(uint32_t), "Tamaño incorrecto para float y uint32_t");
-    uint32_t binary;
-    memcpy(&binary, &value, sizeof(float));
 
-    string binaryString;
-    for (int i = 24; i >= 0; --i) {
-        binaryString += ((binary >> i) & 1) ? '1' : '0';
+    for(int i=n-1 ; i>=0 ; i--){
+        numbinario.push_back(v[i]);
     }
 
-    return binaryString;
-}
 
+    for(int i=0 ; i<n  ; i++){
+        result+=numbinario[i]*pow(2,i);
+    }
+    return result;
+}

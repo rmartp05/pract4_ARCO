@@ -1,51 +1,68 @@
 #ifndef ALU_H
 #define ALU_H
-
-#include "QString"
-#include "sstream"
-#include "bitset"
-
+#include <vector>
+#include <iostream>
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <math.h>
+#include "string.h"
+#include <sstream>
 using namespace std;
 
 class ALU
 {
-private:
-    union Code {
-
-        struct{
-            unsigned int partFrac : 23;
-            unsigned int expo : 8;
-            unsigned int sign : 1;
-        }bitfield;
-
-        float numero;
-        unsigned int numerox;
-    };
-
-    union Code operador1;
-    union Code operador2;
-
-    unsigned int hexNumA;
-    unsigned int hexNumB;
-
-    void multi();
-
-    void div();
-    void ieeeToHex();
-    void imprimirNumeroBinario(float numero);
-    bitset<24> convertBinary(bitset<24> mantisa);
-    bitset<24> calcularComplementoDos(bitset<24> numero);
-    bitset<24> calcular_acarreo(bitset<24> a, bitset<24> b);
-    string floatToBinaryIEEE754(float value);
-
-    // pasar ieee a hexa aqui
-
+public:
 public:
     ALU();
+    float sumar(float numA, float numB);
+    float multiplicar(float numA, float numB);
+    float dividir(float numA, float numB);
+    int sumaBinaria(vector<int> P,vector<int> ma);
+    string floattoIEE (float num);
+    vector<int> DtoB(int partFrac, bool denormal);
+    vector<int> complemento(vector<int> vBits);
+    unsigned int VectorToInt(vector<int> v);
 
-    void leerOperadores(QString numero1, QString numero2);
-
-    void suma();
+private:
+    int g=0;
+    int r=0;
+    int st=0;
+    int n=24;
+    int c=0;
+    int c2=0;
+    int d=0;
+    int k=0;
+    int t=0;
+    int t1=0;
+    int t2=0;
+    int dAux;
+    int copiaNumero=0;
+    int contBits=24;
+    int ultima=0;
+    int i;
+    int ultima2;
+    int parteEnteraA=0;
+    int parteEnteraB=0;
+    float DecimalA=0;
+    float DecimalB=0;
+    float bPrima=0;
+    float r1=0;
+    unsigned int result=0;
+    vector<int> mb;
+    vector<int> ma;
+    vector<int> P;
+    vector<int> uno;
+    vector<int> parteDecimalB;
+    vector<int> parteDecimalA;
+    vector<int> numbinario;
+    vector<float> Y;
+    vector<float> X;
+    string iee;
+    bool operandosIntercambiados = false;
+    bool complementado_P = false;
+    bool denormalA = false;
+    bool denormalB = false;
 };
 
 #endif // ALU_H

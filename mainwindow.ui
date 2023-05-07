@@ -461,7 +461,7 @@
      <rect>
       <x>90</x>
       <y>220</y>
-      <width>431</width>
+      <width>681</width>
       <height>171</height>
      </rect>
     </property>
@@ -471,56 +471,68 @@
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <widget class="QPushButton" name="botonSuma">
+    <widget class="QPushButton" name="botonOperate">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>110</y>
+       <width>181</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>OPERATE</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBox">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>0</y>
+       <width>361</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <item>
+      <property name="text">
+       <string>+</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>*</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>/</string>
+      </property>
+     </item>
+    </widget>
+    <widget class="QPushButton" name="botonReset">
+     <property name="geometry">
+      <rect>
+       <x>570</x>
+       <y>130</y>
+       <width>111</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>RESET</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="botonExit">
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>0</y>
+       <y>120</y>
        <width>121</width>
-       <height>61</height>
+       <height>51</height>
       </rect>
      </property>
      <property name="text">
-      <string>+</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="botonMulti">
-     <property name="geometry">
-      <rect>
-       <x>310</x>
-       <y>0</y>
-       <width>121</width>
-       <height>61</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>x</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="botonIgual">
-     <property name="geometry">
-      <rect>
-       <x>310</x>
-       <y>110</y>
-       <width>121</width>
-       <height>61</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>=</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="botonDiv">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>110</y>
-       <width>121</width>
-       <height>61</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>/</string>
+      <string>EXIT</string>
      </property>
     </widget>
    </widget>
@@ -606,48 +618,6 @@
        <width>171</width>
        <height>41</height>
       </rect>
-     </property>
-    </widget>
-   </widget>
-   <widget class="QFrame" name="frame_5">
-    <property name="geometry">
-     <rect>
-      <x>570</x>
-      <y>270</y>
-      <width>111</width>
-      <height>81</height>
-     </rect>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::StyledPanel</enum>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Raised</enum>
-    </property>
-    <widget class="QPushButton" name="botonReset">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>0</y>
-       <width>111</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>RESET</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="botonHistorial">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>40</y>
-       <width>111</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>HISTORIAL</string>
      </property>
     </widget>
    </widget>

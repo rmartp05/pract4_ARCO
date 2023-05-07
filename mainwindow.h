@@ -15,24 +15,18 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    std::string ToHex(float value);
+
 
 private slots:
 
-    void on_botonSuma_clicked();
 
-    void on_botonMulti_clicked();
-
-    void on_botonDiv_clicked();
-
-    void on_botonIgual_clicked();
+    void on_botonOperate_clicked();
 
     void on_botonReset_clicked();
 
-    void on_botonHistorial_clicked();
+    void on_botonExit_clicked();
 
-    void convertir_hex(QString numero1, QString numero2);
-
-    void convertir_ieee(QString numero1, QString numero2);
 private:
     Ui::MainWindow *ui;
 };
