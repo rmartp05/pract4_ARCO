@@ -33,145 +33,74 @@ string MainWindow:: ToHex(float value) {
 
 
 
-
-
-
-
-
-
-
-//void MainWindow::on_botonSuma_clicked()
-//{
-
-//}
-
-
-//void MainWindow::on_botonMulti_clicked()
-//{
-//    QString numero1 = ui->lineEdit_OP1->text();
-//    QString numero2 = ui->lineEdit_OP2->text();
-//    convertir_hex(numero1,numero2);
-//    convertir_ieee(numero1,numero2);
-//}
-
-
-//void MainWindow::on_botonDiv_clicked()
-//{
-//    QString numero1 = ui->lineEdit_OP1->text();
-//    QString numero2 = ui->lineEdit_OP2->text();
-//    convertir_hex(numero1,numero2);
-//    convertir_ieee(numero1,numero2);
-//}
-
-
-//void MainWindow::on_botonIgual_clicked()//hace la operacion de suma, multi o div y printea los resultados
-//{
-
-//}
-
-
-//void MainWindow::on_botonReset_clicked()
-//{
-
-//}
-
-
-//void MainWindow::on_botonHistorial_clicked()
-//{
-
-//}
-
-//void MainWindow::convertir_hex(QString numero1, QString numero2){
-//    bool isDecimal_1 = numero1.contains(".");
-//    bool isDecimal_2 = numero2.contains(".");
-//    unsigned long long int num1;
-//    unsigned long long int num2;
-
-//    //hacemos numero1:
-
-//    if (isDecimal_1) {
-//        double num_double = numero1.toDouble();
-//        unsigned long long int* p = reinterpret_cast<unsigned long long int*>(&num_double);
-//        num1 = *p;
-//    } else {
-//        num1 = numero1.toULongLong();
-//    }
-
-//    QString hex_numero1 = QString::number(num1, 16);
-
-//    //hacemos numero2:
-
-//    if (isDecimal_2) {
-//        double num_double = numero2.toDouble();
-//        unsigned long long int* p = reinterpret_cast<unsigned long long int*>(&num_double);
-//        num2 = *p;
-//    } else {
-//        num2 = numero2.toULongLong();
-//    }
-
-//    QString hex_numero2 = QString::number(num2, 16);
-
-//    //"imprimimos" los numeros en hex
-//    ui->text_hex_op1->append(hex_numero1);
-//    ui->text_hex_op2->append(hex_numero2);
-//}
-
-//void MainWindow::convertir_ieee(QString numero1, QString numero2){
-
-//    //"imprimimos" los dos numeros convertidos en ieee
-//    ui->text_ieee_op1->append(result1);
-//    ui->text_ieee_op2->append(result2);
-//}
-
-void MainWindow::on_botonOperate_clicked()
-{
+void MainWindow::on_botonOperate_clicked() {
+    // Crear una instancia de la clase ALU
     ALU alu;
-    string result754="";
-    string numA754="";
-    string numB754="";
-    QString result="";
+    // Variables para almacenar los resultados en diferentes formatos
+    string result754 = "";
+    string numA754 = "";
+    string numB754 = "";
+    QString result = "";
     QString qnumAH;
     QString qnumBH;
     QString qresultadoH;
-    float numA=0;
-    float numB=0;
-    QString qnumA754 ="";
-    QString qnumB754 ="";
-    QString qresult754="";
+    float numA = 0;
+    float numB = 0;
+    QString qnumA754 = "";
+    QString qnumB754 = "";
+    QString qresult754 = "";
     string numAH;
     string numBH;
     string resultadoH;
     QString num = "";
     QString num2 = "";
 
-    if(ui->comboBox->currentIndex()==0){
+    // Comprobar el índice seleccionado en el combobox
+    if (ui->comboBox->currentIndex() == 0) {
+        // Obtener los números ingresados en los lineEdit y convertirlos a valores float
         num = ui->lineEdit_OP1->text();
         num2 = ui->lineEdit_OP2->text();
         numA = num.toFloat();
         numB = num2.toFloat();
-        float resultado=alu.sumar(numA, numB);
+
+        // Realizar la operación de suma
+        float resultado = alu.sumar(numA, numB);
+
+        // Convertir los números y resultados a formato IEEE-754
         numA754 = alu.floattoIEE(numA);
-        qnumA754=  QString::fromStdString(numA754);
-        ui->text_ieee_op2->setText(qnumA754);//creo
+        qnumA754 = QString::fromStdString(numA754);
+        ui->text_ieee_op2->setText(qnumA754);
+
         numB754 = alu.floattoIEE(numB);
-        qnumB754=  QString::fromStdString(numB754);
+        qnumB754 = QString::fromStdString(numB754);
         ui->text_ieee_op1->setText(qnumB754);
+
+        // Convertir los números y resultados a formato hexadecimal
         numAH = ToHex(numA);
-        qnumAH =  QString::fromStdString(numAH);
-        ui->text_hex_op2->setText(qnumAH);//H
+        qnumAH = QString::fromStdString(numAH);
+        ui->text_hex_op2->setText(qnumAH);
+
         numBH = ToHex(numB);
-        qnumBH=  QString::fromStdString(numBH);
-        ui->text_hex_op1->setText(qnumBH);//H
+        qnumBH = QString::fromStdString(numBH);
+        ui->text_hex_op1->setText(qnumBH);
+
+        // Convertir el resultado a formato IEEE-754 y hexadecimal
         result754 = alu.floattoIEE(resultado);
-        qresult754= QString::fromStdString(result754);
+        qresult754 = QString::fromStdString(result754);
         ui->text_ieee_resultado->setText(qresult754);
+
         resultadoH = ToHex(resultado);
-        qresultadoH =  QString::fromStdString(resultadoH);
+        qresultadoH = QString::fromStdString(resultadoH);
         ui->text_hex_resultado->setText(qresultadoH);
+
+        // Convertir el resultado a formato QString y mostrarlo en el campo de texto
         result = QString::number(resultado);
         ui->text_resultado->setText(result);
     }
-    if(ui->comboBox->currentIndex()==1){
+
+    // Repetir la misma lógica para las otras dos opciones del combobox (multiplicación y división)
+    if (ui->comboBox->currentIndex() == 1) {
+        // Realizar la operación de multiplicación
         num = ui->lineEdit_OP1->text();
         num2 = ui->lineEdit_OP2->text();
         numA = num.toFloat();
@@ -179,16 +108,16 @@ void MainWindow::on_botonOperate_clicked()
         float resultado=alu.multiplicar(numA, numB);
         numA754 = alu.floattoIEE(numA);
         qnumA754=  QString::fromStdString(numA754);
-        ui->text_ieee_op2->setText(qnumA754);//creo
+        ui->text_ieee_op2->setText(qnumA754);
         numB754 = alu.floattoIEE(numB);
         qnumB754=  QString::fromStdString(numB754);
         ui->text_ieee_op1->setText(qnumB754);
         numAH = ToHex(numA);
         qnumAH =  QString::fromStdString(numAH);
-        ui->text_hex_op2->setText(qnumAH);//H
+        ui->text_hex_op2->setText(qnumAH);
         numBH = ToHex(numB);
         qnumBH=  QString::fromStdString(numBH);
-        ui->text_hex_op1->setText(qnumBH);//H
+        ui->text_hex_op1->setText(qnumBH);
         result754 = alu.floattoIEE(resultado);
         qresult754= QString::fromStdString(result754);
         ui->text_ieee_resultado->setText(qresult754);
@@ -198,7 +127,8 @@ void MainWindow::on_botonOperate_clicked()
         result = QString::number(resultado);
         ui->text_resultado->setText(result);
     }
-    if(ui->comboBox->currentIndex()==2){
+    if (ui->comboBox->currentIndex() == 2) {
+        // Realizar la operación de división
         num = ui->lineEdit_OP1->text();
         num2 = ui->lineEdit_OP2->text();
         numA = num.toFloat();
@@ -206,16 +136,16 @@ void MainWindow::on_botonOperate_clicked()
         float resultado=alu.dividir(numA, numB);
         numA754 = alu.floattoIEE(numA);
         qnumA754=  QString::fromStdString(numA754);
-        ui->text_ieee_op2->setText(qnumA754);//creo
+        ui->text_ieee_op2->setText(qnumA754);
         numB754 = alu.floattoIEE(numB);
         qnumB754=  QString::fromStdString(numB754);
         ui->text_ieee_op1->setText(qnumB754);
         numAH = ToHex(numA);
         qnumAH =  QString::fromStdString(numAH);
-        ui->text_hex_op2->setText(qnumAH);//H
+        ui->text_hex_op2->setText(qnumAH);
         numBH = ToHex(numB);
         qnumBH=  QString::fromStdString(numBH);
-        ui->text_hex_op1->setText(qnumBH);//H
+        ui->text_hex_op1->setText(qnumBH);
         result754 = alu.floattoIEE(resultado);
         qresult754= QString::fromStdString(result754);
         ui->text_ieee_resultado->setText(qresult754);
